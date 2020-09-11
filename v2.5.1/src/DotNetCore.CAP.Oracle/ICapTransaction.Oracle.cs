@@ -2,10 +2,10 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 
-using System.Data;
-using System.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
+using System.Diagnostics;
 
 // ReSharper disable once CheckNamespace
 namespace DotNetCore.CAP

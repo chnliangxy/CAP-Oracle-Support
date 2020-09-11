@@ -1,14 +1,14 @@
 ﻿
-using System;
-using System.Data;
-using System.Threading;
-using System.Threading.Tasks;
 using Dapper;
 using DotNetCore.CAP.Abstractions;
 using DotNetCore.CAP.Models;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Oracle.ManagedDataAccess.Client;
+using System;
+using System.Data;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DotNetCore.CAP.Oracle
 {

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Data;
-using System.Threading;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using DotNetCore.CAP.Dashboard;
 using Microsoft.Extensions.Logging;
 using Oracle.ManagedDataAccess.Client;
+using System;
+using System.Data;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DotNetCore.CAP.Oracle
 {

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using DotNetCore.CAP.Processor;
 using Microsoft.Extensions.Logging;
 using Oracle.ManagedDataAccess.Client;
+using System;
+using System.Threading.Tasks;
 
 namespace DotNetCore.CAP.Oracle
 {
@@ -44,8 +44,8 @@ namespace DotNetCore.CAP.Oracle
                     using (var connection = new OracleConnection(_options.ConnectionString))
                     {
                         removedCount = await connection.ExecuteAsync(
-                     $@"DELETE FROM {table} WHERE ExpiresAt < :now AND rownum < :count",
-                     new { now = DateTime.Now, count = MaxBatch });
+                     $@"DELETE FROM {table} WHERE ExpiresAt < :Now AND rownum < :Count",
+                     new { DateTime.Now, Count = MaxBatch });
                     }
 
                     if (removedCount != 0)

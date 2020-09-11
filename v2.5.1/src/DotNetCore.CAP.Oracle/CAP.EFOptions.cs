@@ -25,12 +25,20 @@ namespace DotNetCore.CAP
         /// </summary>
         internal string Version { get; set; } = "v1";
 
-        public virtual string GetPublishedTableName()
+        /// <summary>
+        /// Get Published Table Name
+        /// </summary>
+        /// <returns></returns>
+        public string GetPublishedTableName()
         {
             return $"{TableNamePrefix}_PUBLISHED";
         }
 
-        public virtual string GetReceivedTableName()
+        /// <summary>
+        /// Get Received Table Name
+        /// </summary>
+        /// <returns></returns>
+        public string GetReceivedTableName()
         {
             return $"{TableNamePrefix}_RECEIVED";
         }

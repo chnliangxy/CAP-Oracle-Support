@@ -8,6 +8,7 @@
     <RepositoryUrl>https://github.com/Muphalem/CAP-Oracle-Support</RepositoryUrl>
     <AssemblyVersion>2.5.1.1</AssemblyVersion>
     <Version>2.5.1.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

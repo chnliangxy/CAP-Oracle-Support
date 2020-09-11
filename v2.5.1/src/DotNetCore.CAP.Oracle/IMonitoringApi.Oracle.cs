@@ -1,15 +1,16 @@
 ﻿// Copyright (c) .NET Core Community. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using Dapper;
 using DotNetCore.CAP.Dashboard;
 using DotNetCore.CAP.Dashboard.Monitoring;
 using DotNetCore.CAP.Infrastructure;
 using DotNetCore.CAP.Models;
+using Oracle.ManagedDataAccess.Client;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace DotNetCore.CAP.Oracle
 {
@@ -26,16 +27,23 @@ namespace DotNetCore.CAP.Oracle
 
         public StatisticsDto GetStatistics()
         {
-            var sql = string.Format($@"
-select count(Id) from {_options.GetUserName()}.{_options.GetPublishedTableName()} where StatusName = 'Succeeded';
-select count(Id) from {_options.GetUserName()}.{_options.GetReceivedTableName()} where StatusName = 'Succeeded';
-select count(Id) from {_options.GetUserName()}.{_options.GetPublishedTableName()} where StatusName = 'Failed';
-select count(Id) from {_options.GetUserName()}.{_options.GetReceivedTableName()} where StatusName = 'Failed';");
+            var sql = string.Format($@"BEGIN 
+OPEN :rslt1 FOR select count(Id) from {_options.GetUserName()}.{_options.GetPublishedTableName()} where StatusName = 'Succeeded';
+OPEN :rslt2 FOR select count(Id) from {_options.GetUserName()}.{_options.GetReceivedTableName()} where StatusName = 'Succeeded';
+OPEN :rslt3 FOR select count(Id) from {_options.GetUserName()}.{_options.GetPublishedTableName()} where StatusName = 'Failed';
+OPEN :rslt4 FOR select count(Id) from {_options.GetUserName()}.{_options.GetReceivedTableName()} where StatusName = 'Failed'; 
+END;");
+
+            OracleDynamicParameters dynParams = new OracleDynamicParameters();
+            dynParams.Add(":rslt1", OracleDbType.RefCursor, ParameterDirection.Output);
+            dynParams.Add(":rslt2", OracleDbType.RefCursor, ParameterDirection.Output);
+            dynParams.Add(":rslt3", OracleDbType.RefCursor, ParameterDirection.Output);
+            dynParams.Add(":rslt4", OracleDbType.RefCursor, ParameterDirection.Output);
 
             var statistics = UseConnection(connection =>
             {
                 var stats = new StatisticsDto();
-                using (var multi = connection.QueryMultiple(sql))
+                using (var multi = connection.QueryMultiple(sql, param: dynParams))
                 {
                     stats.PublishedSucceeded = multi.ReadSingle<int>();
                     stats.ReceivedSucceeded = multi.ReadSingle<int>();
@@ -132,9 +140,9 @@ select count(Id) from {_options.GetUserName()}.{_options.GetReceivedTableName()}
 
         private int GetNumberOfMessage(IDbConnection connection, string tableName, string statusName)
         {
-            var sqlQuery = $"select count(Id) from {_options.GetUserName()}.{tableName} where StatusName = :state";
+            var sqlQuery = $"select count(Id) from {_options.GetUserName()}.{tableName} where StatusName = :State";
 
-            var count = connection.ExecuteScalar<int>(sqlQuery, new { state = statusName });
+            var count = connection.ExecuteScalar<int>(sqlQuery, new { State = statusName });
             return count;
         }
 
@@ -166,20 +174,20 @@ select count(Id) from {_options.GetUserName()}.{_options.GetReceivedTableName()}
             IDictionary<string, DateTime> keyMaps)
         {
             var sqlQuery =
-            $@"
+                $@"
                 SELECT aggr.*
                 FROM (
                          SELECT TO_CHAR(Added,'yyyy-mm-dd-hh24') AS Key, COUNT(Id) Count
                          FROM {_options.GetUserName()}.{tableName}
-                         WHERE StatusName = :P_StatusName
+                         WHERE StatusName = :StatusName
                          GROUP BY TO_CHAR(Added,'yyyy-mm-dd-hh24')
                      ) aggr
-                WHERE Key >= :P_MinKey AND Key <= :P_MaxKey";
+                WHERE Key >= :MinKey AND Key <= :MaxKey";
 
             var valuesMap = connection.Query<TimelineCounter>(
                     sqlQuery,
-                    new { keys = keyMaps.Keys, statusName })
-                .ToDictionary(x => x.Key, x => x.Count);
+                    new { statusName, MinKey = keyMaps.Keys.Min(), MaxKey = keyMaps.Keys.Max() }
+               ).ToDictionary(x => x.Key, x => x.Count);
 
             foreach (var key in keyMaps.Keys)
             {

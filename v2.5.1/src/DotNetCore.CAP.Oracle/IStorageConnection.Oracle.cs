@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using DotNetCore.CAP.Infrastructure;
 using DotNetCore.CAP.Models;
 using Oracle.ManagedDataAccess.Client;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DotNetCore.CAP.Oracle
 {
@@ -64,7 +64,7 @@ VALUES(:Id,'{_capOptions.Version}',:Name,'{message.Group}',:Content,:Retries,:Ad
 
             using (var connection = new OracleConnection(Options.ConnectionString))
             {
-                _ = connection.Execute(sql, new { Id = message.Id, Name = message.Name, Content = message.Content, Retries = message.Retries, Added = message.Added, ExpiresAt = message.ExpiresAt, StatusName = message.StatusName });
+                _ = connection.Execute(sql, new { message.Id, message.Name, message.Content, message.Retries, message.Added, message.ExpiresAt, message.StatusName });
             }
         }
 
