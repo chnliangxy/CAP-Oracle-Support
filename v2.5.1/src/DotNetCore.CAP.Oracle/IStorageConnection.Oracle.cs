@@ -1,10 +1,10 @@
-﻿using Dapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Dapper;
 using DotNetCore.CAP.Infrastructure;
 using DotNetCore.CAP.Models;
 using Oracle.ManagedDataAccess.Client;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace DotNetCore.CAP.Oracle
 {
@@ -60,11 +60,11 @@ namespace DotNetCore.CAP.Oracle
 
             var sql = $@"
 INSERT INTO {Options.GetUserName()}.{_receivedTableName}(Id,Version,Name,""GROUP"",Content,Retries,Added,ExpiresAt,StatusName)
-VALUES(:Id,'{_capOptions.Version}',:Name,'{message.Group}',:Content,:Retries,:Added,:ExpiresAt,:StatusName)";
+VALUES(:Id,'{_capOptions.Version}',:Name,:P_Group,:Content,:Retries,:Added,:ExpiresAt,:StatusName)";
 
             using (var connection = new OracleConnection(Options.ConnectionString))
             {
-                _ = connection.Execute(sql, new { message.Id, message.Name, message.Content, message.Retries, message.Added, message.ExpiresAt, message.StatusName });
+                _ = connection.Execute(sql, new { message.Id, message.Name, P_Group = message.Group, message.Content, message.Retries, message.Added, message.ExpiresAt, message.StatusName });
             }
         }
 

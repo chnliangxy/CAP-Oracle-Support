@@ -1,14 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <Company>.NET Core Community</Company>
-    <Authors>Muphalem</Authors>
-    <PackageProjectUrl>https://github.com/Muphalem/CAP-Oracle-Support</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Muphalem/CAP-Oracle-Support</RepositoryUrl>
-    <AssemblyVersion>2.5.1.1</AssemblyVersion>
-    <Version>2.5.1.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>ncc</Authors>
+    <Company>ncc</Company>
+    <PackageId>DotNetCore.CAP.Oracle</PackageId>
+    <PackageProjectUrl>https://github.com/dotnetcore/CAP</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dotnetcore/CAP</RepositoryUrl>
+    <AssemblyVersion>2.5.1.0</AssemblyVersion>
+    <FileVersion>2.5.1.0</FileVersion>
+    <Version>2.5.1.0</Version>
+    <PackageIconUrl>https://raw.githubusercontent.com/dotnetcore/CAP/master/docs/content/img/logo.png</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>

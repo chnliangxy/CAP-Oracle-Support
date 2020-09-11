@@ -87,7 +87,7 @@ END;");
 
             if (!string.IsNullOrEmpty(queryDto.Group))
             {
-                where += " and \"GROUP\"=:Group";
+                where += " and \"GROUP\"=:P_Group";
             }
 
             if (!string.IsNullOrEmpty(queryDto.Content))
@@ -110,7 +110,7 @@ END;");
             return UseConnection(conn => conn.Query<MessageDto>(sqlQuery, new
             {
                 queryDto.StatusName,
-                queryDto.Group,
+                P_Group = queryDto.Group,
                 queryDto.Name,
                 queryDto.Content,
                 Offset = queryDto.CurrentPage * queryDto.PageSize,
