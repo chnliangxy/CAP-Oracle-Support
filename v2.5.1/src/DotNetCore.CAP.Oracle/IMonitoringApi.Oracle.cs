@@ -77,7 +77,7 @@ END;");
             var where = string.Empty;
             if (!string.IsNullOrEmpty(queryDto.StatusName))
             {
-                where += " and StatusName=:StatusName";
+                where += " and lower(StatusName)=lower(:StatusName)";
             }
 
             if (!string.IsNullOrEmpty(queryDto.Name))
@@ -120,27 +120,27 @@ END;");
 
         public int PublishedFailedCount()
         {
-            return UseConnection(conn => GetNumberOfMessage(conn, "published", StatusName.Failed));
+            return UseConnection(conn => GetNumberOfMessage(conn, _options.GetPublishedTableName(), StatusName.Failed));
         }
 
         public int PublishedSucceededCount()
         {
-            return UseConnection(conn => GetNumberOfMessage(conn, "published", StatusName.Succeeded));
+            return UseConnection(conn => GetNumberOfMessage(conn, _options.GetPublishedTableName(), StatusName.Succeeded));
         }
 
         public int ReceivedFailedCount()
         {
-            return UseConnection(conn => GetNumberOfMessage(conn, "received", StatusName.Failed));
+            return UseConnection(conn => GetNumberOfMessage(conn, _options.GetReceivedTableName(), StatusName.Failed));
         }
 
         public int ReceivedSucceededCount()
         {
-            return UseConnection(conn => GetNumberOfMessage(conn, "received", StatusName.Succeeded));
+            return UseConnection(conn => GetNumberOfMessage(conn, _options.GetReceivedTableName(), StatusName.Succeeded));
         }
 
         private int GetNumberOfMessage(IDbConnection connection, string tableName, string statusName)
         {
-            var sqlQuery = $"select count(Id) from {_options.GetUserName()}.{tableName} where StatusName = :State";
+            var sqlQuery = $"select count(Id) from {_options.GetUserName()}.{tableName} where lower(StatusName) = lower(:State)";
 
             var count = connection.ExecuteScalar<int>(sqlQuery, new { State = statusName });
             return count;
@@ -179,7 +179,7 @@ END;");
                 FROM (
                          SELECT TO_CHAR(Added,'yyyy-mm-dd-hh24') AS Key, COUNT(Id) Count
                          FROM {_options.GetUserName()}.{tableName}
-                         WHERE StatusName = :StatusName
+                         WHERE lower(StatusName) = lower(:StatusName)
                          GROUP BY TO_CHAR(Added,'yyyy-mm-dd-hh24')
                      ) aggr
                 WHERE Key >= :MinKey AND Key <= :MaxKey";
